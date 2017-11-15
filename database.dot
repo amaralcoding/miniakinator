@@ -1,0 +1,32 @@
+digraph database
+{
+0[label="Tem pelo?"];
+0->1[label="sim"];
+0->6[label="nao"];
+1[label="Eh bipede?"];
+1->2[label="sim"];
+1->3[label="nao"];
+2[label="homem"];
+3[label="E selvagem?"];
+3->4[label="sim"];
+3->5[label="nao"];
+4[label="leao"];
+5[label="cao"];
+6[label="Tem bico?"];
+6->7[label="sim"];
+6->8[label="nao"];
+7[label="galo"];
+8[label="Eh objeto?"];
+8->9[label="sim"];
+8->12[label="nao"];
+9[label="Se escreve nele?"];
+9->13[label="sim"];
+9->11[label="nao"];
+13[label="Guarda segredos?"];
+13->14[label="sim"];
+13->10[label="nao"];
+14[label="diario"];
+10[label="caderno"];
+11[label="cadeira"];
+12[label="porco"];
+}
