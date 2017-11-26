@@ -37,7 +37,7 @@ int open_file(FILE **file){
 }
 
 int exisist_database(FILE *file){
-    char str[10];
+    char str[30];
 
     fscanf(file,"%[^\n]",str);
 
@@ -52,18 +52,10 @@ void create_database(FILE *file){
     fprintf(file,"digraph database\n{\n");
 }
 
-void position_file(FILE *file){
-    rewind(file);
-
-    fseek(file,-2*sizeof(char),SEEK_END);
-
-    fprintf(file,"%s","b\n}");
-}
-
 NODE* create_object(char value[100],int *label){
     NODE *object;
 
-    object = malloc(sizeof(NODE));
+    object = (NODE*) malloc(sizeof(NODE));
 
     object->right = NULL;
 
@@ -96,26 +88,6 @@ void write_database(FILE *file,NODE *root){
 
         write_database(file,aux->right);
     }
-}
-
-void test(NODE **root,int *label){
-    NODE *aux;
-
-    aux = create_object("TEM PELAGEM?",label);
-
-    aux->right = create_object("EH BIPEDE?",label);
-
-    aux->right->left = create_object("HOMEM",label);
-
-    aux->right->right = create_object("PORCO",label);
-
-    aux->left = create_object("RONRONA?",label);
-
-    aux->left->left = create_object("GATO",label);
-
-    aux->left->right = create_object("CAO",label);
-
-    *root = aux;
 }
 
 int trata_string(char str[]){
@@ -223,7 +195,7 @@ NODE* percorre(NODE *anterior,int *label){
         if(resposta=='s'){
             printf("VENCI VOCE HAHA! EBAA\n");
 
-            return NULL;
+            return anterior;
         }
 
         else{
@@ -278,20 +250,18 @@ NODE* percorre(NODE *anterior,int *label){
         }
         if(resposta=='s'){
             NODE* test = percorre(anterior->left,label);
-            if(test!=NULL){
-                anterior->left = test;
-            }
 
-            return NULL;
+            anterior->left = test;
+
+            return anterior;
         }
 
         else{
             NODE* test = percorre(anterior->right,label);
-            if(test!=NULL){
-                anterior->right = test;
-            }
 
-            return NULL;
+            anterior->right = test;
+
+            return anterior;
         }
     }
 }
@@ -315,7 +285,6 @@ int main(){
         }
 
         else{
-
             //PULA O '{'
             fgetc(file);
 
@@ -354,62 +323,8 @@ int main(){
         root = create_object(objeto,&label);
     }
 
-    else if(islower(root->text[0])){
-        printf("O objeto pensado eh: %s?\n",root->text);
-        printf("Resposta(S/N): ");
-        char resposta;
-        scanf(" %c",&resposta);
-        resposta = tolower(resposta);
-        while(resposta!='s' && resposta!='n'){
-            printf("RESPOSTA INAVALIDA TENTE NOVAMENTE:\n");
-            printf("Resposta(S/N): ");
-            scanf(" %c",&resposta);
-            resposta = tolower(resposta);
-        }
-        if(resposta=='s'){
-            printf("VENCI VOCE HAHA! EBAA\n");
-        }
-
-        else{
-            printf("Entao qual eh o objeto?\n");
-
-            char objeto[100];
-
-            scanf(" %[^\n]",objeto);
-
-            objeto[0] = tolower(objeto[0]);
-
-            printf("Digite uma pergunta em que \'sim\' significa %s e \'nao\' significa %s: ",objeto,root->text);
-
-            char pergunta[100];
-
-            scanf(" %[^\n]",pergunta);
-
-            pergunta[0] = toupper(pergunta[0]);
-
-            int tam = strlen(pergunta);
-
-            if(pergunta[tam-1]!='?'){
-                pergunta[tam] = '?';
-                pergunta[tam+1] = '\0';
-            }
-
-            NODE *new_node = create_object(pergunta,&label);
-
-            NODE *new_node2 = create_object(objeto,&label);
-
-            new_node->right = root;
-
-            new_node->left = new_node2;
-
-            root = new_node;
-
-            printf("Perdi!!! :(\n");
-        }
-    }
-
     else{
-        percorre(root,&label);
+        root = percorre(root,&label);
     }
 
     write_database(file,root);
